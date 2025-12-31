@@ -1,0 +1,39 @@
+name: Node.js CI/CD Pipeline
+
+# 1. Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 2. Check out the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 3. Set up the Node.js environment
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    # 4. Install dependencies and run tests
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+  deploy:
+    needs: build-and-test # Only run if the build job passes
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deploying to Production
+      run: echo "Deploying code to the server..."
